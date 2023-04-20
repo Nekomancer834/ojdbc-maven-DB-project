@@ -1,0 +1,8 @@
+create table MOCK_DATA (
+	pat_id INT,
+	pat_name VARCHAR(50),
+	pat_mobile VARCHAR(50),
+	pat_address VARCHAR(50),
+	pat_contact_no VARCHAR(50)
+);
+insert into MOCK_DATA (pat_id, pat_name, pat_mobile, pat_address, pat_contact_no) values (1, 'Jane Simeone', '941-291-9261', '4264 Dottie Point', '394-130-2073');

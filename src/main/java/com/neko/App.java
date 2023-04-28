@@ -16,13 +16,13 @@ public class App {
     public static void main( String[] args ) throws IOException{
 
         keyboard = new Scanner(System.in);
-        String username = "ORA_tat120", password = "CS470_9326";
+        String username = "uname123", password = "passwd123";
         int userInput;
 
         try{
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             System.out.println("Registered driver");
-            conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1",username, password);
+            conn = DriverManager.getConnection("DB SERVER ADDRESS",username, password);
             System.out.println("logged in as: "+username);
             conn.setAutoCommit(false);
             stmt = conn.createStatement();

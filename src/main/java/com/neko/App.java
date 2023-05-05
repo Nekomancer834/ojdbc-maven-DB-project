@@ -14,17 +14,18 @@ public class App {
     static Scanner keyboard;
     static String userSQLInput;
     public static void main( String[] args ) throws IOException{
-
+        String searchTerm = "";
+        String[] newOrder = new String[6];
         keyboard = new Scanner(System.in);
-        String username = "uname123", password = "passwd123";
+        String username = "ora_tat120", password = "CS470_9326";
         int userInput;
 
         try{
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             System.out.println("Registered driver");
-            conn = DriverManager.getConnection("DB SERVER ADDRESS",username, password);
+            conn = DriverManager.getConnection("jdbc:oracle:thin:@oracle2.wiu.edu:1521/orclpdb1",username, password);
             System.out.println("logged in as: "+username);
-            conn.setAutoCommit(false);
+            //conn.setAutoCommit(false);
             stmt = conn.createStatement();
         }catch(Exception e){
             System.out.println("exception when registering and signing in");
@@ -32,29 +33,57 @@ public class App {
         }
         menuloop: while(true){
 
+
             System.out.println("Please select what you want to do\n" +
-                    "1: insert data\n" +
-                    "2: update data\n" +
-                    "3: query data\n" +
-                    "4: import from file\n" +
+                    "1: search genre\n"+
+                    "2: search band\n" +
+                    "3: create order\n"+
+                    "4: lookup sales\n" +
+                    "5: customer order lookup\n" +
                     "99: exit / go back");
             keyboard.reset();
             userInput = keyboard.nextInt();
             keyboard.nextLine();
-            keyboard.useDelimiter(";");
+            //keyboard.useDelimiter(";");
+            searchTerm = "";
             System.out.print("\033[H\033[2J");
             switch (userInput) {
                 case 1:
-                    sqlInsert(null);
+                    // search genre
+                    System.out.println("What genre?");
+                    searchTerm = keyboard.nextLine();
+                    sqlQuery("SELECT * FROM PRODUCT_SEARCH WHERE GENRE = \'"+searchTerm+"\'");
                     break;
                 case 2:
-                    sqlUpdate(null);
+                    //search band
+                    System.out.println("What band?");
+                    searchTerm = keyboard.nextLine();
+                    sqlQuery("SELECT * FROM PRODUCT_SEARCH WHERE BAND_NAME = \'"+searchTerm+"\'");
                     break;
                 case 3:
-                    sqlQuery(null);
+                    //insert new order
+                    System.out.println("What orderID?");
+                    newOrder[0] = keyboard.next();
+                    System.out.println("What customerID?");
+                    newOrder[1] = keyboard.next();
+                    System.out.println("What paymentID?");
+                    newOrder[2] = keyboard.next();
+                    System.out.println("What productID?");
+                    newOrder[3] = keyboard.next();
+                    System.out.println("What Date?");
+                    newOrder[4] = keyboard.next();
+                    sqlInsert("insert into ORDERS (ORDER_ID, CUSTOMER_ID, PAYMENT_ID, PRODUCT_ID, ORDER_DATE) values ("
+                            +newOrder[0]+", "+newOrder[1]+", "+newOrder[2]+", "+newOrder[3]+", '"+newOrder[4]+"')");
                     break;
                 case 4:
-                    sqlFile();
+                    //lookup sales
+                    sqlQuery("SELECT * FROM OWNER_VIEW");
+                    break;
+                case 5:
+                    //lookup orders for customer
+                    System.out.println("Customer ID?");
+                    searchTerm = keyboard.nextLine();
+                    sqlQuery("SELECT * FROM ORDER_INFO WHERE CUSTOMER_ID = \'"+searchTerm+"\'");
                     break;
                 case 99:
                     System.out.println("now Exiting");
@@ -107,13 +136,13 @@ public class App {
             }
             ResultSet rset = stmt.executeQuery(userSQLInput);
             ResultSetMetaData rsmd = rset.getMetaData();
-            for(int i = 1; i<rsmd.getColumnCount(); i++){
+            for(int i = 1; i<=rsmd.getColumnCount(); i++){
                 System.out.printf("| %-25s ",rsmd.getColumnName(i));
             }
             System.out.print("\n");
             while(rset.next()){
                 //System.out.print("| ");
-                for(int i = 1; i<rsmd.getColumnCount(); i++){
+                for(int i = 1; i<=rsmd.getColumnCount(); i++){
                     System.out.printf("| %-25s ",rset.getString(i));
                 }
                 System.out.println("|");
